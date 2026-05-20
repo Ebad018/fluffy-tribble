@@ -3,7 +3,7 @@
 This repository contains an Unreal Engine 5 project demonstrating AI behaviors implemented entirely in C++ and driven by a Behavior Tree, fulfilling all G and VG requirements.
 
 ## AI Implementation Overview
-Instead of relying on Blueprint graphs, the AI logic and perception are implemented natively in C++. The Behavior Tree acts as the state machine to switch between behaviors seamlessly based on Blackboard keys set by the C++ AI Controller.
+Instead of relying on Blueprint graphs, the AI logic and perception are implemented natively in C++ (sorry Fredrick T_T i can't do BP). The Behavior Tree acts as the state machine to switch between behaviors seamlessly based on Blackboard keys set by the C++ AI Controller.
 
 ### Perception (Sight & Hearing)
 The AI uses `UAIPerceptionComponent` configured with two distinct senses:
@@ -15,6 +15,10 @@ The `BT_EnemyAI` uses a Selector node to prioritize behaviors from left to right
 - **Chase (Highest Priority):** Triggered when `TargetActor` is set (Sight). The AI aggressively moves towards the player until sight is lost.
 - **Investigate (Medium Priority):** Triggered when `TargetLocation` is set (Hearing/Lost Sight). The AI moves to the location of the disturbance and then uses a custom C++ task (`UBTTask_ClearTarget`) to clear the location and resume patrolling.
 - **Patrol (Lowest Priority):** The default state. The AI uses a custom C++ task (`UBTTask_FindRandomPatrol`) to pick a random reachable point on the NavMesh, walks to it, and waits before picking a new point.
+
+### Bonus Features (VG Requirements)
+- **Team Alertness:** This feature was built-in from the start! When the Sight AI spots the player, it automatically broadcasts the player's location to all other AI agents in the level (like the Hearing AI), prompting them to immediately switch into the Investigate state and move to the target location.
+- **UI Indicators:** To make AI states incredibly clear for the demonstration, C++ screen debug messages act as UI indicators. A giant red `!!! YOU ARE BEING CHASED !!!` appears when actively detected by sight, and a yellow `? NOISE HEARD - INVESTIGATING ?` appears when the AI detects a sound.
 
 ### Custom C++ Classes
 - `AAssignAIController`: Manages the AI Perception Component, configures sight and hearing radius, and binds the perception update event to dynamically update the Blackboard.
